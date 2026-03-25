@@ -124,10 +124,13 @@ source venv/bin/activate
 # 4. Install dependencies
 pip install -r requirements.txt
 
-# 5. Run database migrations
+# 5. Generate sample movie model (built-in dataset, no download required)
+python manage.py generate_sample_data
+
+# 6. Run database migrations
 python manage.py migrate
 
-# 6. Start the development server
+# 7. Start the development server
 python manage.py runserver
 ```
 
@@ -138,7 +141,9 @@ Open your browser and navigate to:
 http://localhost:8000
 ```
 
-That's it! The demo model (2K movies) is included and works out of the box. 🎉
+That's it! The built-in sample model (127 popular movies) is generated and ready to go. 🎉
+
+> **Want more movies?** Train with the full TMDB dataset instead — see [Model Training](#-model-training) below.
 
 ---
 
@@ -246,45 +251,40 @@ Response:
 
 ## 🎓 Model Training
 
-### Using Demo Model
+### Option A — Built-in Sample Model (Recommended for Quick Start)
 
-The project includes a pre-trained demo model with 2,000 popular movies. No training needed!
+No external data download needed. Uses 127 popular movies included in the project:
 
 ```bash
-# Demo model is in static/ directory
-export MODEL_DIR=./static
+python manage.py generate_sample_data
 python manage.py runserver
 ```
 
-### Training Your Own Model
+### Option B — Train with the Full TMDB Dataset
 
-Want to train on more movies or your own dataset? See the [**Training Guide**](training/guide.md) for:
+For a real-world model with thousands of movies:
 
-- 📖 Complete training documentation
-- 🎯 Configuration options (10K to 1M+ movies)
-- ⚙️ Performance tuning guidelines
-- 📊 Dataset requirements
-- 🔧 Advanced features
-
-**Quick Training Example:**
+1. Download the **TMDB Movies Dataset** CSV from [Kaggle](https://www.kaggle.com/datasets/asaniczka/tmdb-movies-dataset-2023-930k-movies)
+2. Place the CSV in the `training/` directory
+3. Run the trainer:
 
 ```python
 from training.train import MovieRecommenderTrainer
 
-# Initialize trainer
 trainer = MovieRecommenderTrainer(
-    output_dir='./models',
+    output_dir='./training/models',
     use_dimensionality_reduction=True,
     n_components=500
 )
 
-# Train on your dataset
 df, sim_matrix = trainer.train(
-    'path/to/your/dataset.csv',
+    'training/TMDB_movie_dataset_v11.csv',
     quality_threshold='medium',  # low/medium/high
     max_movies=100000            # Limit dataset size
 )
 ```
+
+4. Start the server — it will automatically use the new model files.
 
 **For detailed training instructions**, see:
 - 📘 [Training Guide](training/guide.md) - Complete training documentation

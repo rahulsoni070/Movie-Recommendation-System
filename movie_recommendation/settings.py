@@ -6,6 +6,10 @@ import os
 import sys
 from pathlib import Path
 
+# Ensure logs directory exists before logging is configured
+_LOGS_DIR = Path(__file__).resolve().parent.parent / 'logs'
+_LOGS_DIR.mkdir(exist_ok=True)
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
