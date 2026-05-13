@@ -1094,19 +1094,19 @@ A:
 
 ---
 
-## 📚 Additional Resources
+## 📚 Bibliography / References
 
-### Documentation
+### Project Documentation
 - [README.md](README.md) - Quick start and overview
 - [training/guide.md](training/guide.md) - Model training guide
 - [CHANGELOG.md](CHANGELOG.md) - Version history
 
-### External Resources
-- [Django Documentation](https://docs.djangoproject.com/)
-- [scikit-learn Documentation](https://scikit-learn.org/)
-- [pandas Documentation](https://pandas.pydata.org/)
+### Harvard Style References
+1. Django Software Foundation (n.d.) *Django documentation*. Available at: https://docs.djangoproject.com/ (Accessed: 13 May 2026).
+2. pandas development team (n.d.) *pandas documentation*. Available at: https://pandas.pydata.org/ (Accessed: 13 May 2026).
+3. scikit-learn developers (n.d.) *scikit-learn documentation*. Available at: https://scikit-learn.org/ (Accessed: 13 May 2026).
 
-### Community
+### Community Support
 - GitHub Issues - Bug reports and feature requests
 - GitHub Discussions - Questions and community support
 
