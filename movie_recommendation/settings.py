@@ -6,6 +6,10 @@ import os
 import sys
 from pathlib import Path
 
+# Ensure logs directory exists before logging is configured
+_LOGS_DIR = Path(__file__).resolve().parent.parent / 'logs'
+_LOGS_DIR.mkdir(exist_ok=True)
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -187,6 +191,10 @@ LOGGING = {
             'maxBytes': 1024 * 1024 * 5,  # 5 MB
             'backupCount': 5,
             'formatter': 'verbose',
+            # Defer opening the file until the first log record is emitted.
+            # This prevents a FileNotFoundError at startup when the logs/
+            # directory has not yet been created (e.g. on a fresh clone).
+            'delay': True,
         },
     },
     'root': {
@@ -200,7 +208,7 @@ LOGGING = {
             'propagate': False,
         },
         'recommender': {
-            'handlers': ['console'],
+            'handlers': ['console', 'file'],
             'level': 'DEBUG' if DEBUG else 'INFO',
             'propagate': False,
         },

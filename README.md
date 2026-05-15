@@ -18,6 +18,7 @@
 - [Screenshots](#-screenshots)
 - [Features](#-features)
 - [Quick Start](#-quick-start)
+- [Windows Troubleshooting](#-windows-troubleshooting)
 - [Project Structure](#-project-structure)
 - [Usage](#-usage)
 - [Model Training](#-model-training)
@@ -100,45 +101,125 @@ The Movie Recommendation System provides intelligent movie suggestions using **c
 
 ### Prerequisites
 
-- Python 3.10 or higher
-- pip package manager
-- 8GB RAM (recommended for training)
+- Python **3.10 or higher** — install from [python.org](https://www.python.org/downloads/) (**not** the Microsoft Store)
 - Git
 
-### Installation
+> ⚠️ **Windows users:** If you installed Python from the **Microsoft Store**, venv creation may silently fail. Uninstall it and reinstall from [python.org](https://www.python.org/downloads/), ticking **"Add Python to PATH"** during setup. See [Windows Troubleshooting](#-windows-troubleshooting) below.
 
+---
+
+### Option A — One-command setup (recommended)
+
+**Windows** (double-click or run in Command Prompt):
+```bat
+setup.bat
+```
+
+**macOS / Linux**:
 ```bash
-# 1. Clone the repository
-git clone https://github.com/yourusername/movie-recommendation-system.git
-cd movie-recommendation-system
+chmod +x setup.sh && ./setup.sh
+```
 
-# 2. Create virtual environment
-python -m venv venv
+These scripts handle everything: venv creation, dependency installation, model generation, and migrations.
 
-# 3. Activate virtual environment
-# Windows:
-venv\Scripts\activate
-# macOS/Linux:
-source venv/bin/activate
+---
 
-# 4. Install dependencies
+### Option B — Manual setup
+
+**Windows — Command Prompt**
+
+```bat
+git clone https://github.com/rahulsoni070/Movie-Recommendation-System.git
+cd Movie-Recommendation-System
+
+py -m venv venv
+venv\Scripts\activate.bat
+
 pip install -r requirements.txt
-
-# 5. Run database migrations
+python manage.py generate_sample_data
 python manage.py migrate
-
-# 6. Start the development server
 python manage.py runserver
 ```
+
+**Windows — PowerShell**
+
+```powershell
+git clone https://github.com/rahulsoni070/Movie-Recommendation-System.git
+cd Movie-Recommendation-System
+
+py -m venv venv
+.\venv\Scripts\Activate.ps1        # if blocked, run first: Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+
+pip install -r requirements.txt
+python manage.py generate_sample_data
+python manage.py migrate
+python manage.py runserver
+```
+
+**macOS / Linux**
+
+```bash
+git clone https://github.com/rahulsoni070/Movie-Recommendation-System.git
+cd Movie-Recommendation-System
+
+python3 -m venv venv
+source venv/bin/activate
+
+pip install -r requirements.txt
+python manage.py generate_sample_data
+python manage.py migrate
+python manage.py runserver
+```
+
+---
 
 ### Access the Application
 
 Open your browser and navigate to:
 ```
-http://localhost:8000
+http://127.0.0.1:8000
 ```
 
-That's it! The demo model (2K movies) is included and works out of the box. 🎉
+That's it! The built-in sample model (127 popular movies) is generated and ready to go. 🎉
+
+> **Want more movies?** Train with the full TMDB dataset instead — see [Model Training](#-model-training) below.
+
+---
+
+## 🪟 Windows Troubleshooting
+
+### `venv\Scripts\activate` — "The system cannot find the path specified"
+
+This error means the virtual environment was not created correctly. The most common cause is **Python installed from the Microsoft Store**.
+
+**Fix (recommended):**
+1. Open **Windows Settings → Apps → Advanced app settings → App execution aliases**
+2. Turn **OFF** both `python.exe` and `python3.exe` toggles
+3. Uninstall the Microsoft Store Python from **Settings → Apps**
+4. Install Python from [python.org](https://www.python.org/downloads/) — tick **"Add Python to PATH"**
+5. Re-run `setup.bat`
+
+**Quick workaround (without reinstalling Python):**
+```bat
+py -m venv venv
+venv\Scripts\activate.bat
+```
+Use `py` (the Python Launcher) instead of `python` — it bypasses the Store aliases.
+
+### PowerShell — "running scripts is disabled on this system"
+
+```powershell
+Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+.\venv\Scripts\Activate.ps1
+```
+
+### `pip install` fails on a specific package
+
+Upgrade pip first, then retry:
+```bat
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+```
 
 ---
 
@@ -246,45 +327,40 @@ Response:
 
 ## 🎓 Model Training
 
-### Using Demo Model
+### Option A — Built-in Sample Model (Recommended for Quick Start)
 
-The project includes a pre-trained demo model with 2,000 popular movies. No training needed!
+No external data download needed. Uses 127 popular movies included in the project:
 
 ```bash
-# Demo model is in static/ directory
-export MODEL_DIR=./static
+python manage.py generate_sample_data
 python manage.py runserver
 ```
 
-### Training Your Own Model
+### Option B — Train with the Full TMDB Dataset
 
-Want to train on more movies or your own dataset? See the [**Training Guide**](training/guide.md) for:
+For a real-world model with thousands of movies:
 
-- 📖 Complete training documentation
-- 🎯 Configuration options (10K to 1M+ movies)
-- ⚙️ Performance tuning guidelines
-- 📊 Dataset requirements
-- 🔧 Advanced features
-
-**Quick Training Example:**
+1. Download the **TMDB Movies Dataset** CSV from [Kaggle](https://www.kaggle.com/datasets/asaniczka/tmdb-movies-dataset-2023-930k-movies)
+2. Place the CSV in the `training/` directory
+3. Run the trainer:
 
 ```python
 from training.train import MovieRecommenderTrainer
 
-# Initialize trainer
 trainer = MovieRecommenderTrainer(
-    output_dir='./models',
+    output_dir='./training/models',
     use_dimensionality_reduction=True,
     n_components=500
 )
 
-# Train on your dataset
 df, sim_matrix = trainer.train(
-    'path/to/your/dataset.csv',
+    'training/TMDB_movie_dataset_v11.csv',
     quality_threshold='medium',  # low/medium/high
     max_movies=100000            # Limit dataset size
 )
 ```
+
+4. Start the server — it will automatically use the new model files.
 
 **For detailed training instructions**, see:
 - 📘 [Training Guide](training/guide.md) - Complete training documentation
